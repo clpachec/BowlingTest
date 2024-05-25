@@ -13,7 +13,6 @@ This project is a Bowling Scorekeeper application developed using Unreal Engine 
 ### Prerequisites
 
 - Unreal Engine 5.4.1
-- A suitable code editor such as Visual Studio
 
 ### Installing
 
