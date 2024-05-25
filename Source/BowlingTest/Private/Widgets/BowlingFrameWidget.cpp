@@ -170,14 +170,37 @@ void UBowlingFrameWidget::ValidateInput(const FText& inText, int32 inScoreIndex)
 		return;
 	}
 
+	
+	inputChar = ValidateEdgeCases(inScoreIndex, inputChar);
+
+	ScoreEditableTextArray[inScoreIndex]->SetText(FText::FromString(inputChar));
+}
+
+FString UBowlingFrameWidget::ValidateEdgeCases(int32 inScoreIndex, FString inputChar)
+{
 	if (inScoreIndex != 1 && inputChar == SpareChars) //Only the second score can be a spare
 		inputChar = BlankChar;
 	else if (inScoreIndex == 1 && IsStrike() && FrameNumber != 10) //you can't have a score in second if strike
 		inputChar = BlankChar;
 	else if (inScoreIndex == 1 && StrikeChars.Contains(inputChar) && FrameNumber != 10) //Cannot have a strike on second if not the 10 frame
 		inputChar = BlankChar;
+	else if (inScoreIndex == 1 && FrameNumber == 10 && StrikeChars.Contains(inputChar) && !IsStrike()) //Cannot have a strike on second in the 10 frame if the first is not a strike
+		inputChar = BlankChar;
 
-	ScoreEditableTextArray[inScoreIndex]->SetText(FText::FromString(inputChar));
+	int32 scoreOne = 0;
+	if (IsValidChar(inputChar) && inScoreIndex == 1 && GetPoint(0, scoreOne))
+	{
+		if ((FrameNumber == 10 && !IsStrike()) || FrameNumber != 10)
+		{
+			int32 totalScore = scoreOne + UKismetStringLibrary::Conv_StringToInt(inputChar);
+			if (totalScore == 10) //Change it to spare if it adds to 10
+				inputChar = "/";
+			else if (totalScore > 10) //Do not allow more than 10 score on the second score
+				inputChar = BlankChar;
+		}
+	}	
+	
+	return inputChar;
 }
 
 bool UBowlingFrameWidget::IsStrike() const

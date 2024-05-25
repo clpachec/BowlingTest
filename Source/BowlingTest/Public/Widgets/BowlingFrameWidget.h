@@ -80,6 +80,8 @@ protected:
 
 	void ValidateInput(const FText& inText, int32 inScoreIndex);
 
+	FString ValidateEdgeCases(int32 inScoreIndex, FString inputChar);
+
 	bool IsStrike() const;
 
 	bool IsStrike(int32 inIndex) const;
